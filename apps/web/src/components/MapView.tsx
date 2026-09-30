@@ -12,6 +12,7 @@ import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { difficultyColor } from "@/lib/format";
 import { wgs84ToGcj02 } from "@/lib/coordinate";
+import { withBase } from "@/lib/client";
 
 export interface MapRoute {
   id: string;
@@ -38,9 +39,11 @@ interface Props {
   onRouteClick?: (id: string) => void;
   className?: string;
   fitPadding?: number;
+  /** 路线页传入：用于懒加载该路线的等高线叠加 */
+  slug?: string;
 }
 
-export default function MapView({ routes, markers = [], activeId, onRouteClick, className = "", fitPadding = 20 }: Props) {
+export default function MapView({ routes, markers = [], activeId, onRouteClick, className = "", fitPadding = 20, slug }: Props) {
   const mapId = useMemo(() => "tpmap_" + Math.random().toString(36).slice(2), []);
 
   useEffect(() => {
@@ -69,12 +72,68 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
         { attribution: "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics", maxZoom: 19 }
       ),
     };
-    baseLayers["地形"].addTo(map);
-    L.control.layers(baseLayers, undefined, { position: "topright" }).addTo(map);
+    baseLayers["卫星"].addTo(map);
+
+    // 等高线叠加：本地 DEM 生成的 GeoJSON（懒加载，随底图坐标系重绘）
+    const overlays: Record<string, L.Layer> = {};
+    const contourGroup = L.layerGroup();
+    overlays["等高线"] = contourGroup;
+    L.control.layers(baseLayers, overlays, { position: "topright" }).addTo(map);
+    let contourData: {
+      minor: { properties: { ele: number }; geometry: { coordinates: [number, number][] } }[];
+      major: { properties: { ele: number }; geometry: { coordinates: [number, number][] } }[];
+    } | null = null;
+    const drawContours = () => {
+      contourGroup.clearLayers();
+      if (!contourData || !map.hasLayer(contourGroup)) return;
+      const build = (
+        feats: { properties: { ele: number }; geometry: { coordinates: [number, number][] } }[],
+        major: boolean
+      ) => {
+        for (const f of feats) {
+          const latlngs = f.geometry.coordinates.map(([lng, lat]) => {
+            if (!useGcj) return [lat, lng] as [number, number];
+            const [gLat, gLng] = wgs84ToGcj02(lat, lng);
+            return [gLat, gLng] as [number, number];
+          });
+          if (latlngs.length < 2) continue;
+          const line = L.polyline(latlngs, {
+            color: major ? "#7a5230" : "#8b6f47",
+            weight: major ? 1.8 : 1,
+            opacity: major ? 0.8 : 0.5,
+          });
+          if (major) line.bindTooltip(`${f.properties.ele}m`, { sticky: true, direction: "top" });
+          line.addTo(contourGroup);
+        }
+      };
+      build(contourData.minor, false);
+      build(contourData.major, true);
+    };
+    if (slug) {
+      map.on("overlayadd", (e) => {
+        if (e.name !== "等高线") return;
+        if (contourData) {
+          drawContours();
+          return;
+        }
+        fetch(withBase(`/contours/${slug}.json`))
+          .then((r) => (r.ok ? r.json() : null))
+          .then((d) => {
+            if (d) {
+              contourData = d;
+              drawContours();
+            }
+          })
+          .catch(() => {});
+      });
+      map.on("overlayremove", (e) => {
+        if (e.name === "等高线") contourGroup.clearLayers();
+      });
+    }
 
     // 中国法规偏移：地形/街道底图为 GCJ-02，需要把 WGS84 轨迹转换后叠加
     const GCJ_LAYERS = new Set(["地形", "街道"]);
-    let useGcj = GCJ_LAYERS.has("地形");
+    let useGcj = GCJ_LAYERS.has("卫星");
 
     const layer = L.layerGroup().addTo(map);
     const draw = (keepView = false) => {
@@ -127,6 +186,7 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
     map.on("baselayerchange", (e) => {
       useGcj = GCJ_LAYERS.has(e.name);
       draw(true);
+      drawContours();
     });
     // 容器尺寸变化时重绘
     const observer = new ResizeObserver(() => map.invalidateSize());
@@ -136,7 +196,7 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
       map.remove();
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [routes, markers, activeId, mapId]);
+  }, [routes, markers, activeId, mapId, slug]);
 
   return <div id={mapId} className={`h-full w-full ${className}`} />;
 }

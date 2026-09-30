@@ -126,7 +126,7 @@ export function RouteDetail({ route }: { route: Route }) {
       {/* 地图 + 海拔 */}
       <section className="card mt-5 overflow-hidden fade-up">
         <div className="h-[300px] w-full sm:h-[380px]">
-          <MapView routes={mapRoutes} markers={mapMarkers} fitPadding={28} />
+          <MapView routes={mapRoutes} markers={mapMarkers} fitPadding={28} slug={route.slug} />
         </div>
         <div className="border-t border-[color:var(--line)] px-4 py-3">
           <div className="mb-1 flex items-center justify-between">
