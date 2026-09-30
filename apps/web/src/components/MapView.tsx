@@ -2,13 +2,16 @@
 
 /**
  * 地图组件 (PRD §40/§88)
- * MVP 使用 Leaflet + OSM/CARTO 瓦片（WGS84 直显，无偏移）。
- * 生产切换高德 JS API 时：track 先过 src/lib/coordinate 的 wgs84ToGcj02。
+ * 底图：Esri 免 key 瓦片（地形/街道/卫星可切换）。
+ * 坐标系：Esri 中国的街道/地形底图按国内法规为 GCJ-02，卫星影像为 WGS84。
+ * 因此轨迹/POI 在 地形/街道 图层渲染前做 WGS84→GCJ-02 转换（coordinate.ts），
+ * 卫星图层用 WGS84 原样渲染，切换图层时自动重绘对齐。
  */
 import { useEffect, useMemo } from "react";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 import { difficultyColor } from "@/lib/format";
+import { wgs84ToGcj02 } from "@/lib/coordinate";
 
 export interface MapRoute {
   id: string;
@@ -69,13 +72,21 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
     baseLayers["地形"].addTo(map);
     L.control.layers(baseLayers, undefined, { position: "topright" }).addTo(map);
 
+    // 中国法规偏移：地形/街道底图为 GCJ-02，需要把 WGS84 轨迹转换后叠加
+    const GCJ_LAYERS = new Set(["地形", "街道"]);
+    let useGcj = GCJ_LAYERS.has("地形");
+
     const layer = L.layerGroup().addTo(map);
-    const draw = () => {
+    const draw = (keepView = false) => {
       layer.clearLayers();
       const bounds = L.latLngBounds([]);
       let has = false;
       for (const r of routes) {
-        const latlngs = r.coords.map(([lng, lat]) => [lat, lng]) as [number, number][];
+        const latlngs = r.coords.map(([lng, lat]) => {
+          if (!useGcj) return [lat, lng] as [number, number];
+          const [gLat, gLng] = wgs84ToGcj02(lat, lng);
+          return [gLat, gLng] as [number, number];
+        });
         if (latlngs.length < 2) continue;
         const isActive = activeId === r.id;
         const dimmed = activeId != null && !isActive;
@@ -103,14 +114,20 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
           iconSize: [26, 26],
           iconAnchor: [13, 26],
         });
-        const mk = L.marker([m.lat, m.lng], { icon }).addTo(layer);
+        const [pLat, pLng] = useGcj ? wgs84ToGcj02(m.lat, m.lng) : [m.lat, m.lng];
+        const mk = L.marker([pLat, pLng], { icon }).addTo(layer);
         mk.bindPopup(`<b>${m.name}</b>`);
-        bounds.extend([m.lat, m.lng]);
+        bounds.extend([pLat, pLng]);
         has = true;
       }
-      if (has) map.fitBounds(bounds, { padding: [fitPadding, fitPadding] });
+      if (has && !keepView) map.fitBounds(bounds, { padding: [fitPadding, fitPadding] });
     };
     draw();
+    // 切换底图时按新坐标重绘（保持当前视野）
+    map.on("baselayerchange", (e) => {
+      useGcj = GCJ_LAYERS.has(e.name);
+      draw(true);
+    });
     // 容器尺寸变化时重绘
     const observer = new ResizeObserver(() => map.invalidateSize());
     observer.observe(el);
