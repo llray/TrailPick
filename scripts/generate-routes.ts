@@ -38,11 +38,16 @@ const DISTRICTS_BY_ZONE: Record<string, string[]> = {
 function buildRoute(seed: SeedRoute, index: number): Route {
   const seedHash = hashSeed(seed.slug);
   let track: [number, number, number][];
-  if (seed.realTrack) {
+  let isOsm = false;
+  const osmFile = path.join(process.cwd(), "scripts", "osm-tracks", `${seed.slug}.json`);
+  if (seed.realTrack || fs.existsSync(osmFile)) {
     // 真实轨迹管线（OSM 等来源）：直接重采样，跳过噪声
-    const p = path.join(process.cwd(), "scripts", "osm-tracks", seed.realTrack);
+    const p = seed.realTrack
+      ? path.join(process.cwd(), "scripts", "osm-tracks", seed.realTrack)
+      : osmFile;
     const raw = JSON.parse(fs.readFileSync(p, "utf8")) as { points: [number, number, number][] };
-    track = resample(raw.points, 80);
+    track = resample(raw.points, 60);
+    isOsm = true;
   } else {
   // 0. 控制点加密：每段插入 2 个垂直摆动中点，模拟真实步道蜿蜒（+25~40% 长度）
   const rand = mulberry32(seedHash);
@@ -129,6 +134,20 @@ function buildRoute(seed: SeedRoute, index: number): Route {
     });
   }
   for (const p of seed.extraPois ?? []) pois.push(p);
+  // OSM 真实轨迹：把沿线类 POI 吸附到轨迹最近点（修正示意坐标），交通类保留原位
+  if (isOsm) {
+    const snapKinds = new Set(["summit", "start", "end", "exit", "water", "camp"]);
+    for (const p of pois) {
+      if (!snapKinds.has(p.kind)) continue;
+      let bd = Infinity, bi = 0;
+      for (let i = 0; i < track.length; i++) {
+        const d = (track[i][1] - p.lat) ** 2 + (track[i][0] - p.lng) ** 2;
+        if (d < bd) { bd = d; bi = i; }
+      }
+      p.lat = track[bi][1];
+      p.lng = track[bi][0];
+    }
+  }
   // 下撤点：陡坡段中点（取轨迹对应里程位置的点）
   analysis.steep.slice(0, 2).forEach((s, i) => {
     const idx = Math.min(track.length - 1, Math.round((s.fromKm * 1000) / 80));
@@ -181,7 +200,12 @@ function buildRoute(seed: SeedRoute, index: number): Route {
     status_note: seed.statusNote,
     source_type: seed.source,
     source_name: seed.sourceName,
-    source_license: seed.sourceLicense ?? (seed.source === "OFFICIAL" ? "公开资料整理" : "平台人工整理（原型示意轨迹）"),
+    source_license: seed.sourceLicense ??
+      (isOsm
+        ? "© OpenStreetMap contributors (ODbL)"
+        : seed.source === "OFFICIAL"
+          ? "公开资料整理"
+          : "平台人工整理（原型示意轨迹）"),
     verified_at: NOW,
     review_status: "PUBLISHED",
     visibility: "PUBLIC",
