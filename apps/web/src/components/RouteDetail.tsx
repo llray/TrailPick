@@ -10,6 +10,7 @@ import type { Route } from "@/lib/types";
 import { formatDuration, difficultyLabel, SOURCE_META, ROUTE_TYPE_LABELS } from "@/lib/format";
 import { StatusBadge, DifficultyBadge, TagChip } from "./badges";
 import { ElevationChart } from "./ElevationChart";
+import WeatherCard from "./WeatherCard";
 import { toggleFavorite, markCompleted, markRecent, setPendingVoteRoutes, getFavorites, getCompleted, withBase } from "@/lib/client";
 
 const MapView = dynamic(() => import("./MapView"), { ssr: false });
@@ -172,6 +173,9 @@ export function RouteDetail({ route }: { route: Route }) {
           📥 GPX
         </a>
       </section>
+
+      {/* 天气 + 动态安全预警 (PRD §19/§61) */}
+      <WeatherCard slug={route.slug} />
 
       {/* 描述 */}
       <p className="mt-5 max-w-3xl text-[15px] leading-[1.9] text-[color:var(--ink-2)]">{route.description}</p>

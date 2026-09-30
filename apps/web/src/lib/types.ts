@@ -7,6 +7,27 @@ export type RouteStatus = "OPEN" | "CAUTION" | "PARTIALLY_CLOSED" | "CLOSED" | "
 
 export type SourceType = "OFFICIAL" | "ADMIN" | "USER_UPLOAD" | "AUTHORIZED_PARTNER";
 
+export interface WeatherDay {
+  date: string;
+  code: number;
+  desc: string;
+  emoji: string;
+  tMax: number;
+  tMin: number;
+  precipProb: number;
+  precipSum: number;
+  windMax: number;
+}
+
+export interface WeatherPayload {
+  slug: string;
+  current: { temp: number; code: number; desc: string; emoji: string } | null;
+  daily: WeatherDay[];
+  alerts: RouteAlert[];
+  updatedAt: string;
+  cached?: boolean;
+}
+
 export type RouteType = "LOOP" | "TRAVERSE" | "OUT_AND_BACK";
 
 export type ReviewStatus = "DRAFT" | "PENDING_REVIEW" | "APPROVED" | "PUBLISHED";
@@ -186,17 +207,18 @@ export interface VoteResults {
   expired: boolean;
 }
 
+/** 动态安全预警 (PRD §61 Route Alert)；API 派生的预警无持久化 id */
 export interface RouteAlert {
-  id: string;
-  routeId: string;
-  type: string;
-  severity: "info" | "warning" | "danger";
+  id?: string;
+  routeId?: string;
+  type: "weather" | "status" | "closure" | "admin";
+  severity: "info" | "caution" | "warning" | "danger";
   message: string;
   start_time?: string;
   end_time?: string;
   source: string;
   verified: boolean;
-  createdAt: string;
+  createdAt?: string;
 }
 
 /** 随机选择结果 (PRD §25-27) */
