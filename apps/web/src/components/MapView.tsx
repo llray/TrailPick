@@ -50,11 +50,24 @@ export default function MapView({ routes, markers = [], activeId, onRouteClick, 
     });
     L.control.zoom({ position: "bottomright" }).addTo(map);
 
-    L.tileLayer("https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png", {
-      attribution:
-        '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> &copy; <a href="https://carto.com/">CARTO</a>',
-      maxZoom: 19,
-    }).addTo(map);
+    // 免 key 底图（Esri ArcGIS Online，中国大陆可直连）：地形 / 街道 / 卫星
+    // 备选：CARTO Voyager 已于 2025 起强制 API key（水印提示），如需可在 URL 加 ?key=xxx
+    const baseLayers: Record<string, L.TileLayer> = {
+      地形: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles &copy; Esri &mdash; Source: USGS, Esri, TANA, Garmin", maxZoom: 19 }
+      ),
+      街道: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Street_Map/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles &copy; Esri &mdash; Source: Esri, DeLorme, NAVTEQ", maxZoom: 19 }
+      ),
+      卫星: L.tileLayer(
+        "https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}",
+        { attribution: "Tiles &copy; Esri &mdash; Source: Esri, Maxar, Earthstar Geographics", maxZoom: 19 }
+      ),
+    };
+    baseLayers["地形"].addTo(map);
+    L.control.layers(baseLayers, undefined, { position: "topright" }).addTo(map);
 
     const layer = L.layerGroup().addTo(map);
     const draw = () => {
