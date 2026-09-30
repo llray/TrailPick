@@ -1,0 +1,19 @@
+[Unit]
+Description=TrailPick 去走哪 (Next.js @ /TrailPick)
+After=network.target
+
+[Service]
+Type=simple
+WorkingDirectory=/opt/TrailPick/apps/web
+Environment=NODE_ENV=production
+Environment=NEXT_PUBLIC_BASE_PATH=/TrailPick
+Environment=PORT=4310
+Environment=HOSTNAME=127.0.0.1
+# 修改为你的管理口令：
+Environment=ADMIN_PASSWORD=trailpick
+ExecStart=/usr/bin/env npm run start -- -p 4310 -H 127.0.0.1
+Restart=always
+RestartSec=3
+
+[Install]
+WantedBy=multi-user.target

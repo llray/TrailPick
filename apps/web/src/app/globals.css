@@ -1,0 +1,238 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --paper: #f5f2e8;
+  --paper-2: #ede9db;
+  --card: #fffdf6;
+  --ink: #1c2a21;
+  --ink-2: #4a584e;
+  --ink-3: #83907f;
+  --forest: #1e4d38;
+  --forest-2: #2c6a4d;
+  --forest-soft: #e3ede4;
+  --blaze: #e85d26;
+  --blaze-2: #c94d1d;
+  --blaze-soft: #fdeadd;
+  --lake: #1f7a8c;
+  --line: #ddd6c2;
+  --line-2: #cfc7ae;
+  --danger: #b02e2e;
+  --warn: #9a6b0a;
+}
+
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  background-color: var(--paper);
+  color: var(--ink);
+  font-feature-settings: "tnum";
+}
+
+/* 等高线地形图纹理背景 */
+.topo-bg {
+  background-color: var(--paper);
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='420' height='420' viewBox='0 0 420 420'%3E%3Cg fill='none' stroke='%231e4d38' stroke-opacity='0.055' stroke-width='1.2'%3E%3Cpath d='M-20 90 Q 60 30 140 80 T 320 70 T 460 110'/%3E%3Cpath d='M-20 130 Q 70 60 150 115 T 330 100 T 470 150'/%3E%3Cpath d='M-20 170 Q 80 95 160 150 T 340 135 T 480 195'/%3E%3Cpath d='M-20 215 Q 90 130 170 190 T 350 175 T 490 240'/%3E%3Cpath d='M-20 265 Q 70 200 150 255 T 330 245 T 470 300'/%3E%3Cpath d='M-20 320 Q 90 255 170 310 T 350 300 T 490 355'/%3E%3Cpath d='M-20 375 Q 80 310 160 365 T 340 355 T 480 410'/%3E%3C/g%3E%3Cg fill='none' stroke='%23e8622c' stroke-opacity='0.05' stroke-width='1'%3E%3Cpath d='M-20 240 Q 100 180 200 235 T 420 225' stroke-dasharray='6 5'/%3E%3Cpath d='M-20 60 Q 110 10 210 55 T 430 45' stroke-dasharray='6 5'/%3E%3C/g%3E%3C/svg%3E");
+}
+
+.font-display {
+  font-family: var(--font-display), "PingFang SC", "Microsoft YaHei", sans-serif;
+  font-stretch: 118%;
+  letter-spacing: 0.01em;
+}
+
+.font-num {
+  font-family: var(--font-num), ui-monospace, monospace;
+  font-feature-settings: "tnum";
+}
+
+@layer components {
+  .card {
+    @apply rounded-2xl border bg-[color:var(--card)];
+    border-color: var(--line);
+    box-shadow: 0 1px 2px rgba(28, 42, 33, 0.05), 0 6px 18px -8px rgba(28, 42, 33, 0.1);
+  }
+  .card-hover {
+    transition: transform 0.18s ease, box-shadow 0.18s ease;
+  }
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 2px 4px rgba(28, 42, 33, 0.06), 0 14px 28px -10px rgba(28, 42, 33, 0.16);
+  }
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border px-3 py-1.5 text-[13px] font-medium select-none cursor-pointer transition-colors;
+    border-color: var(--line-2);
+    color: var(--ink-2);
+    background: var(--card);
+  }
+  .chip:hover {
+    border-color: var(--forest-2);
+    color: var(--forest);
+  }
+  .chip-active {
+    background: var(--forest);
+    border-color: var(--forest);
+    color: #f2f7f0;
+  }
+  .chip-active:hover {
+    color: #fff;
+  }
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-5 py-2.5 text-[15px] font-semibold transition-all active:scale-[0.97] disabled:opacity-50 disabled:pointer-events-none select-none;
+  }
+  .btn-primary {
+    @apply btn text-white;
+    background: var(--blaze);
+    box-shadow: 0 2px 10px -2px rgba(232, 93, 38, 0.5);
+  }
+  .btn-primary:hover {
+    background: var(--blaze-2);
+  }
+  .btn-forest {
+    @apply btn text-white;
+    background: var(--forest);
+  }
+  .btn-forest:hover {
+    background: var(--forest-2);
+  }
+  .btn-ghost {
+    @apply btn;
+    border: 1.5px solid var(--line-2);
+    color: var(--ink);
+    background: transparent;
+  }
+  .btn-ghost:hover {
+    border-color: var(--forest);
+    color: var(--forest);
+  }
+  .stat-num {
+    @apply font-num font-semibold tabular-nums;
+  }
+  .label {
+    @apply text-[12px] font-semibold uppercase tracking-[0.12em];
+    color: var(--ink-3);
+  }
+  .waymark {
+    @apply inline-flex h-5 items-center rounded-[4px] px-1.5 text-[10px] font-bold uppercase tracking-wider text-white;
+  }
+  .trail-dash {
+    background-image: linear-gradient(to right, var(--line-2) 55%, transparent 45%);
+    background-size: 12px 2px;
+    background-repeat: repeat-x;
+    height: 2px;
+  }
+  .input {
+    @apply rounded-xl border px-3.5 py-2.5 text-[15px] outline-none transition-shadow bg-[color:var(--card)];
+    border-color: var(--line-2);
+  }
+  .input:focus {
+    border-color: var(--forest-2);
+    box-shadow: 0 0 0 3px rgba(44, 106, 77, 0.15);
+  }
+}
+
+@keyframes fadeUp {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+.fade-up {
+  animation: fadeUp 0.45s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes popIn {
+  0% {
+    opacity: 0;
+    transform: scale(0.9);
+  }
+  70% {
+    transform: scale(1.03);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.pop-in {
+  animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+@keyframes diceShake {
+  0%, 100% { transform: rotate(0); }
+  20% { transform: rotate(-14deg) translateY(-2px); }
+  40% { transform: rotate(12deg); }
+  60% { transform: rotate(-9deg) translateY(-3px); }
+  80% { transform: rotate(7deg); }
+}
+.dice-rolling {
+  animation: diceShake 0.5s ease-in-out infinite;
+  display: inline-block;
+}
+
+@keyframes pulseDot {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+.pulse-dot {
+  animation: pulseDot 1.6s ease-in-out infinite;
+}
+
+/* Leaflet 覆写 */
+.leaflet-container {
+  font-family: inherit;
+  background: #e8ecdf;
+  border-radius: inherit;
+}
+.leaflet-popup-content-wrapper {
+  border-radius: 12px;
+  box-shadow: 0 6px 24px -6px rgba(28, 42, 33, 0.25);
+}
+.leaflet-popup-content {
+  margin: 10px 14px;
+  font-size: 13px;
+  line-height: 1.5;
+}
+.tp-marker {
+  background: none;
+  border: none;
+}
+.tp-pin {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #fffdf6;
+  box-shadow: 0 2px 6px rgba(28, 42, 33, 0.35);
+  font-size: 11px;
+}
+.tp-pin > span {
+  transform: rotate(45deg);
+}
+
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--line-2);
+  border-radius: 8px;
+  border: 2px solid var(--paper);
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}

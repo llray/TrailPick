@@ -1,0 +1,15 @@
+# deps / builds
+node_modules/
+.next/
+out/
+*.tsbuildinfo
+
+# 运行时状态（部署服务器上生成，不入库；routes.json 为种子产物，保留入库）
+data/votes.json
+data/stats.json
+*.log
+.env*.local
+
+# 系统/编辑器
+.DS_Store
+.idea/

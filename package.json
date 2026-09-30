@@ -1,0 +1,16 @@
+{
+  "name": "trailpick",
+  "private": true,
+  "version": "0.1.0",
+  "description": "TrailPick - 深圳徒步路线多人选择与决策平台 (MVP)",
+  "scripts": {
+    "dev": "pnpm --filter web dev",
+    "build": "pnpm --filter web build",
+    "start": "pnpm --filter web start",
+    "seed": "tsx scripts/generate-routes.ts",
+    "test": "tsx scripts/test-core.ts"
+  },
+  "devDependencies": {
+    "tsx": "^4.23.15"
+  }
+}
