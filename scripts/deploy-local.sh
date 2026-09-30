@@ -4,7 +4,7 @@ set -euo pipefail
 cd "$(dirname "$0")/.."
 
 echo "==> 拉取最新代码"
-git pull --ff-only
+git pull --ff-only || echo "（拉取失败，使用本地代码继续）"
 
 echo "==> 安装依赖"
 pnpm install --frozen-lockfile

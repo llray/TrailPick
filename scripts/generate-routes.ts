@@ -37,12 +37,20 @@ const DISTRICTS_BY_ZONE: Record<string, string[]> = {
 
 function buildRoute(seed: SeedRoute, index: number): Route {
   const seedHash = hashSeed(seed.slug);
+  let track: [number, number, number][];
+  if (seed.realTrack) {
+    // 真实轨迹管线（OSM 等来源）：直接重采样，跳过噪声
+    const p = path.join(process.cwd(), "scripts", "osm-tracks", seed.realTrack);
+    const raw = JSON.parse(fs.readFileSync(p, "utf8")) as { points: [number, number, number][] };
+    track = resample(raw.points, 80);
+  } else {
   // 0. 控制点加密：每段插入 2 个垂直摆动中点，模拟真实步道蜿蜒（+25~40% 长度）
   const rand = mulberry32(seedHash);
+  const ctrl = seed.ctrl ?? [];
   const augmented: [number, number, number][] = [];
-  for (let i = 0; i < seed.ctrl.length - 1; i++) {
-    const a = seed.ctrl[i];
-    const b = seed.ctrl[i + 1];
+  for (let i = 0; i < ctrl.length - 1; i++) {
+    const a = ctrl[i];
+    const b = ctrl[i + 1];
     augmented.push(a);
     const dLat = b[0] - a[0];
     const dLng = b[1] - a[1];
@@ -59,14 +67,15 @@ function buildRoute(seed: SeedRoute, index: number): Route {
       }
     }
   }
-  augmented.push(seed.ctrl[seed.ctrl.length - 1]);
+  if (ctrl.length) augmented.push(ctrl[ctrl.length - 1]);
   // 1. 插值 + 噪声 + 采样
-  let track = densify(
+  track = densify(
     augmented.map(([lat, lng, ele]) => ({ lat, lng, ele })),
     45
   );
   track = addFractalNoise(track, seedHash ^ 0x51ed270b, seed.type === "OUT_AND_BACK" ? 60 : 80, 7);
   track = resample(track, 80);
+  }
   // 2. 分析
   const analysis = analyzeTrack(track, seed.terrain);
   // 3. 难度
@@ -78,13 +87,15 @@ function buildRoute(seed: SeedRoute, index: number): Route {
     exit: seed.exit,
   });
   const level = seed.difficultyOverride ?? diff.level;
-  // 4. 轨迹出入（回环/往返的噪声可能让首尾不重合，拉齐）
+  // 4. 轨迹出入（噪声管线首尾不重合时拉齐；真实轨迹保持原样）
   const first = track[0];
-  track[track.length - 1] = [
-    track[track.length - 1][0] * 0.4 + first[0] * 0.6,
-    track[track.length - 1][1] * 0.4 + first[1] * 0.6,
-    track[track.length - 1][2] * 0.4 + first[2] * 0.6,
-  ];
+  if (!seed.realTrack) {
+    track[track.length - 1] = [
+      track[track.length - 1][0] * 0.4 + first[0] * 0.6,
+      track[track.length - 1][1] * 0.4 + first[1] * 0.6,
+      track[track.length - 1][2] * 0.4 + first[2] * 0.6,
+    ];
+  }
   // 5. POI
   const pois: POI[] = [];
   pois.push({
@@ -118,13 +129,14 @@ function buildRoute(seed: SeedRoute, index: number): Route {
     });
   }
   for (const p of seed.extraPois ?? []) pois.push(p);
-  // 下撤点：陡坡段中点
+  // 下撤点：陡坡段中点（取轨迹对应里程位置的点）
   analysis.steep.slice(0, 2).forEach((s, i) => {
+    const idx = Math.min(track.length - 1, Math.round((s.fromKm * 1000) / 80));
     pois.push({
       name: `下撤点 ${i + 1}`,
       kind: "exit",
-      lat: seed.ctrl[Math.min(seed.ctrl.length - 1, 2 + i)][0],
-      lng: seed.ctrl[Math.min(seed.ctrl.length - 1, 2 + i)][1],
+      lat: track[idx][1],
+      lng: track[idx][0],
       note: `K${s.fromKm} 附近坡度 ${s.grade}%`,
     });
   });
@@ -169,7 +181,7 @@ function buildRoute(seed: SeedRoute, index: number): Route {
     status_note: seed.statusNote,
     source_type: seed.source,
     source_name: seed.sourceName,
-    source_license: seed.source === "OFFICIAL" ? "公开资料整理" : "平台人工整理（原型示意轨迹）",
+    source_license: seed.sourceLicense ?? (seed.source === "OFFICIAL" ? "公开资料整理" : "平台人工整理（原型示意轨迹）"),
     verified_at: NOW,
     review_status: "PUBLISHED",
     visibility: "PUBLIC",

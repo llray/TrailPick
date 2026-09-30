@@ -30,11 +30,15 @@ export interface SeedRoute {
   };
   source: SourceType;
   sourceName: string;
+  /** 数据来源许可（如 OSM ODbL）；缺省按 source 类型给默认值 */
+  sourceLicense?: string;
+  /** 真实轨迹文件（scripts/osm-tracks/*.json，[lng,lat,ele][]）；提供时跳过控制点噪声管线 */
+  realTrack?: string;
   status?: RouteStatus;
   statusNote?: string;
   difficultyOverride?: number;
   startName?: string;
   endName?: string;
-  /** 控制点 [lat, lng, ele(m)] */
-  ctrl: [number, number, number][];
+  /** 控制点 [lat, lng, ele(m)]（realTrack 存在时可省略） */
+  ctrl?: [number, number, number][];
 }
