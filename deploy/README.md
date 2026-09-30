@@ -1,50 +1,66 @@
-# 部署到 https://rayliu.xyz/TrailPick
+# 部署说明
 
-应用在 Next.js 层启用 `basePath=/TrailPick`（由 `NEXT_PUBLIC_BASE_PATH` 环境变量控制，本地开发留空则无前缀）。
+## 当前生产环境：https://rayliu.xyz/TrailPick
 
-## 服务器要求
+架构：**本机 (Mac) next start → cloudflared 命名隧道 `fc-game` → Cloudflare → 公网**
 
-- Node.js ≥ 18（推荐 20）
-- nginx（rayliu.xyz 的源站）
-- 可访问 github.com
+```
+iPhone/浏览器 ── HTTPS ──> Cloudflare (rayliu.xyz)
+                             │  ingress: ^/TrailPick.*$
+                             ▼
+                 cloudflared (launchd: com.rayliu.fc-tunnel)
+                             │ http://localhost:4310
+                             ▼
+              next start (launchd: com.rayliu.trailpick-web)
+              NEXT_PUBLIC_BASE_PATH=/TrailPick, 端口 4310
+```
 
-## 首次部署步骤
+同域共存：`/signal0*` → :1025（Signal0）、`/TrailPick*` → :4310（本项目）、其余 → :5173（绿茵巨星 Vite）。
+
+## 组件清单
+
+| 组件 | 位置 |
+| --- | --- |
+| 隧道 ingress 规则 | `~/AI/Football_Card/cloudflared/rayliu.xyz.yml`（`path: ^/TrailPick.*$ → localhost:4310`） |
+| Web 服务 launchd | `launchd/com.rayliu.trailpick-web.plist` → `~/Library/LaunchAgents/` |
+| 运行日志 | `logs/web.log` / `logs/web.err.log` |
+| 投票数据 | `apps/web/data/votes.json`（随代码目录持久化） |
+
+## 更新流程
 
 ```bash
-# 1. 服务器上克隆
-sudo mkdir -p /opt && cd /opt
-sudo git clone https://github.com/llray/TrailPick.git
-sudo chown -R $USER /opt/TrailPick && cd TrailPick
-
-# 2. 安装依赖 + 构建
+cd ~/AI/TrailPick
+git pull
 pnpm install --frozen-lockfile
-cd apps/web
-NEXT_PUBLIC_BASE_PATH=/TrailPick pnpm build
-
-# 3. systemd 常驻（推荐）
-sudo cp deploy/trailpick.service /etc/systemd/system/
-sudo systemctl daemon-reload
-sudo systemctl enable --now trailpick
-
-# 4. nginx 追加反代（把 deploy/nginx-trailpick.conf 内容
-#    粘贴进 rayliu.xyz 对应的 server{} 块）
-sudo nginx -t && sudo nginx -s reload
+cd apps/web && NEXT_PUBLIC_BASE_PATH=/TrailPick pnpm build && cd ../..
+launchctl kickstart -k gui/$(id -u)/com.rayliu.trailpick-web   # 重启服务
 ```
 
-验证：`curl -I https://rayliu.xyz/TrailPick` → 200
+或一键：`bash scripts/deploy-local.sh`
 
-## 后续更新
+注意：`NEXT_PUBLIC_BASE_PATH` 是**构建期**变量，改了必须重新 build。
+
+## 首次安装（新机器）
 
 ```bash
-bash scripts/deploy-vps.sh   # 拉代码 → 构建 → 重启 → 健康检查
+cp launchd/com.rayliu.trailpick-web.plist ~/Library/LaunchAgents/
+launchctl bootstrap gui/$(id -u) ~/Library/LaunchAgents/com.rayliu.trailpick-web.plist
+# 隧道侧：在 Football_Card/cloudflared/rayliu.xyz.yml 的 ingress 里
+# 于 catch-all 之前插入：
+#   - hostname: rayliu.xyz
+#     path: ^/TrailPick.*$
+#     service: http://localhost:4310
+# 然后：launchctl kickstart -k gui/$(id -u)/com.rayliu.fc-tunnel
 ```
 
-## 环境变量
+## 排障
 
-| 变量 | 值 | 说明 |
-| --- | --- | --- |
-| `NEXT_PUBLIC_BASE_PATH` | `/TrailPick` | 子路径前缀（构建期生效，改后需重新 build） |
-| `PORT` | `4310` | 服务监听端口（仅本机回环） |
-| `ADMIN_PASSWORD` | 自定义 | /admin 登录口令，**上线请改掉默认值** |
+- 页面变成绿茵巨星 → 隧道 ingress 规则丢失，或有旧 cloudflared 进程残留：`ps aux | grep 'run fc-game'`，只应有一个（launchd 的那个）
+- 502 → `curl -I http://127.0.0.1:4310/TrailPick` 看本机服务；看 `logs/web.err.log`
+- 本地开发（无前缀）：`pnpm dev` → http://localhost:3000
 
-投票数据持久化在 `/opt/TrailPick/apps/web/data/`（votes.json），升级时自动保留。
+---
+
+## 备选：VPS + nginx 部署
+
+若将来迁到 Linux 服务器：`deploy/nginx-trailpick.conf`（location 反代）+ `deploy/trailpick.service`（systemd）+ `scripts/deploy-vps.sh`（拉取/构建/重启），步骤见 git 历史中的说明：克隆到 /opt/TrailPick → `NEXT_PUBLIC_BASE_PATH=/TrailPick pnpm build` → systemd 常驻 :4310 → nginx `location /TrailPick` 反代。

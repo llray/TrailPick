@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.rayliu.trailpick-web</string>
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/rayliu/.nvm/versions/node/v24.19.0/bin/node</string>
+        <string>/Users/rayliu/AI/TrailPick/apps/web/node_modules/next/dist/bin/next</string>
+        <string>start</string>
+        <string>-p</string>
+        <string>4310</string>
+        <string>-H</string>
+        <string>127.0.0.1</string>
+    </array>
+    <key>WorkingDirectory</key>
+    <string>/Users/rayliu/AI/TrailPick/apps/web</string>
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>NEXT_PUBLIC_BASE_PATH</key>
+        <string>/TrailPick</string>
+        <key>NODE_ENV</key>
+        <string>production</string>
+        <key>PORT</key>
+        <string>4310</string>
+    </dict>
+    <key>RunAtLoad</key>
+    <true/>
+    <key>KeepAlive</key>
+    <true/>
+    <key>StandardOutPath</key>
+    <string>/Users/rayliu/AI/TrailPick/logs/web.log</string>
+    <key>StandardErrorPath</key>
+    <string>/Users/rayliu/AI/TrailPick/logs/web.err.log</string>
+    <key>ProcessType</key>
+    <string>Interactive</string>
+</dict>
+</plist>
