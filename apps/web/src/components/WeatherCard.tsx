@@ -78,7 +78,7 @@ export default function WeatherCard({ slug }: { slug: string }) {
           <div className="flex min-w-[86px] flex-col justify-center border-r border-[color:var(--line)] pr-3">
             <div className="label">当前实况</div>
             <div className="mt-0.5 flex items-center gap-1.5">
-              <span className="text-[22px] leading-none">{data.current.emoji}</span>
+              <span className="text-[20px] leading-none">{data.current.emoji}</span>
               <span className="font-num text-[20px] font-bold">{data.current.temp}°</span>
             </div>
             <div className="mt-0.5 text-[11px] text-[color:var(--ink-3)]">{data.current.desc}</div>
@@ -89,8 +89,8 @@ export default function WeatherCard({ slug }: { slug: string }) {
             <div className="flex flex-col">
               <div className="label">{i === 0 ? "今天" : "明天"} · {fmtDate(d.date)}</div>
               <div className="mt-0.5 flex items-center gap-1.5">
-                <span className="text-[18px] leading-none">{d.emoji}</span>
-                <span className="font-num text-[13.5px] font-semibold">{d.tMin}~{d.tMax}°C</span>
+                <span className="text-[16px] leading-none">{d.emoji}</span>
+                <span className="font-num text-[13px] font-semibold">{d.tMin}~{d.tMax}°C</span>
               </div>
               <div className="mt-0.5 text-[11px] text-[color:var(--ink-3)]">
                 {d.desc} · 降水 {d.precipProb}%

@@ -29,7 +29,7 @@ export default function VoteRoomPage({ params }: Props) {
     return (
       <div className="py-24 text-center">
         <p className="text-[40px]">🕳️</p>
-        <h1 className="mt-2 font-display text-[22px] font-bold">投票箱不存在或已失效</h1>
+        <h1 className="mt-2 font-display text-[20px] font-bold">投票箱不存在或已失效</h1>
         <p className="mt-1 text-[14px] text-[color:var(--ink-3)]">检查一下链接，或发起新的路线投票</p>
       </div>
     );

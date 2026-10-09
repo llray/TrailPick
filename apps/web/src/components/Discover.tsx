@@ -226,7 +226,7 @@ export function Discover() {
             )}
             {routes?.length === 0 && (
               <div className="card flex flex-col items-center gap-2 p-10 text-center">
-                <span className="text-[32px]">🪧</span>
+                <span className="text-[34px]">🪧</span>
                 <p className="font-semibold">没有符合的路线</p>
                 <p className="text-[13px] text-[color:var(--ink-3)]">试试放宽筛选条件，或让骰子决定</p>
                 <button className="btn-primary mt-2" onClick={goRandom}>

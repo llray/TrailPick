@@ -66,7 +66,7 @@ export default function RootLayout({
               <span className="flex h-8 w-8 items-center justify-center rounded-lg bg-[color:var(--forest)] text-[15px] text-white shadow-sm">
                 ▲
               </span>
-              <span className="font-display text-[19px] font-extrabold tracking-tight">
+              <span className="font-display text-[20px] font-extrabold tracking-tight">
                 TrailPick
                 <span className="ml-2 hidden text-[12px] font-semibold text-[color:var(--ink-3)] sm:inline">
                   去走哪 · 深圳
@@ -96,7 +96,7 @@ export default function RootLayout({
         </main>
 
         <footer className="hidden border-t border-[color:var(--line)] py-8 text-center text-[12px] text-[color:var(--ink-3)] md:block">
-          TrailPick · 深圳徒步路线多人选择与决策平台 MVP · 路线数据为原型示意，出发前请核实官方公告
+          TrailPick · 深圳徒步路线多人选择与决策平台 · 轨迹数据 © OpenStreetMap 贡献者 (ODbL)，出发前请核实官方公告
         </footer>
 
         {/* 移动端底部导航 */}
@@ -108,7 +108,7 @@ export default function RootLayout({
                 href={n.href}
                 className="flex flex-col items-center gap-0.5 py-2.5 text-[11px] font-medium text-[color:var(--ink-2)] active:text-[color:var(--blaze)]"
               >
-                <span className="text-[17px] leading-none">{n.icon}</span>
+                <span className="text-[16px] leading-none">{n.icon}</span>
                 {n.label}
               </Link>
             ))}

@@ -95,7 +95,7 @@ export default function AdminPage() {
             onChange={(e) => setPassword(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && login()}
           />
-          {error && <p className="text-[12.5px] text-[color:var(--danger)]">{error}</p>}
+          {error && <p className="text-[12px] text-[color:var(--danger)]">{error}</p>}
           <button className="btn-forest w-full" onClick={login}>
             登录
           </button>
@@ -148,7 +148,7 @@ export default function AdminPage() {
       <header className="flex flex-wrap items-end justify-between gap-3">
         <div>
           <div className="label">Admin CMS</div>
-          <h1 className="mt-1 font-display text-[26px] font-extrabold">路线与社区管理</h1>
+          <h1 className="mt-1 font-display text-[24px] font-extrabold">路线与社区管理</h1>
         </div>
         <div className="flex overflow-hidden rounded-full border border-[color:var(--line-2)] text-[13px]">
           {(["routes", "votes"] as const).map((t) => (
@@ -167,7 +167,7 @@ export default function AdminPage() {
         {stats.map((s) => (
           <div key={s.label} className="card px-4 py-3">
             <div className="label">{s.label}</div>
-            <div className="stat-num mt-1 text-[22px]">{s.value}</div>
+            <div className="stat-num mt-1 text-[20px]">{s.value}</div>
           </div>
         ))}
       </div>
@@ -201,7 +201,7 @@ export default function AdminPage() {
                       <td className="font-num px-2 py-2.5 text-[12px] text-[color:var(--ink-2)]">
                         {formatKm(r.distance_km)} · ★{r.difficulty}
                       </td>
-                      <td className="px-2 py-2.5 text-[11.5px]">
+                      <td className="px-2 py-2.5 text-[11px]">
                         {r.source_type === "USER_UPLOAD" ? (
                           <span className="rounded bg-[color:var(--blaze-soft)] px-1.5 py-0.5 text-[color:var(--blaze-2)]">
                             用户 · {r.uploader_name}
@@ -248,8 +248,8 @@ export default function AdminPage() {
           {votes.map((v) => (
             <Link key={v.id} href={"/v/" + v.id} className="card card-hover flex items-center justify-between p-4">
               <div>
-                <div className="text-[14.5px] font-bold">{v.title}</div>
-                <div className="font-num mt-0.5 text-[11.5px] text-[color:var(--ink-3)]">
+                <div className="text-[14px] font-bold">{v.title}</div>
+                <div className="font-num mt-0.5 text-[11px] text-[color:var(--ink-3)]">
                   {v.id} · 发起 {v.createdBy} · {new Date(v.createdAt).toLocaleString("zh-CN")}
                 </div>
               </div>

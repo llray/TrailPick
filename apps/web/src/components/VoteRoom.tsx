@@ -114,8 +114,8 @@ export function VoteRoom({ voteId }: { voteId: string }) {
     <div className="mx-auto max-w-2xl">
       <header className="fade-up text-center">
         <div className="label">Vote Room · {closed || room.decision ? "已结束" : "投票进行中"}</div>
-        <h1 className="mt-1 font-display text-[26px] font-extrabold sm:text-[32px]">{room.title}</h1>
-        <p className="mt-1.5 flex flex-wrap items-center justify-center gap-3 text-[12.5px] text-[color:var(--ink-3)]">
+        <h1 className="mt-1 font-display text-[24px] font-extrabold sm:text-[34px]">{room.title}</h1>
+        <p className="mt-1.5 flex flex-wrap items-center justify-center gap-3 text-[12px] text-[color:var(--ink-3)]">
           <span>
             👥 <span className="font-num font-bold text-[color:var(--forest)]">{results.totalBallots}</span> 人已投
           </span>
@@ -139,7 +139,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
           <div className="text-[13px] font-semibold text-[color:var(--blaze-2)]">
             {room.decision.method === "DICE_TIE" ? "🎲 平局，骰子决定" : "🎲 提前掷骰决定"}
           </div>
-          <h2 className="mt-1.5 font-display text-[22px] font-extrabold text-[color:var(--forest)]">
+          <h2 className="mt-1.5 font-display text-[20px] font-extrabold text-[color:var(--forest)]">
             {routeById[room.decision.routeId]?.name_cn ?? "已决定"}
           </h2>
           <p className="mt-1 text-[12px] text-[color:var(--ink-3)]">
@@ -169,7 +169,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
               进入投票箱
             </button>
           </div>
-          <p className="mt-2 text-[11.5px] text-[color:var(--ink-3)]">无需注册，昵称保存在本机</p>
+          <p className="mt-2 text-[11px] text-[color:var(--ink-3)]">无需注册，昵称保存在本机</p>
         </div>
       )}
 
@@ -227,7 +227,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
                       <span className="rounded bg-[color:var(--forest)] px-1.5 py-0.5 text-[10px] font-bold text-white">领先</span>
                     )}
                   </div>
-                  <div className="font-num mt-0.5 flex flex-wrap items-center gap-x-3 text-[11.5px] text-[color:var(--ink-3)]">
+                  <div className="font-num mt-0.5 flex flex-wrap items-center gap-x-3 text-[11px] text-[color:var(--ink-3)]">
                     <span>{formatKm(r.distance_km)}</span>
                     <span>{formatDuration(r.estimated_duration_min)}</span>
                     <span>↑{r.elevation_gain_m}m</span>
@@ -239,7 +239,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
                 {results.revealed && (
                   <div className="text-right">
                     <div className="font-num text-[20px] font-bold leading-none">{cnt}</div>
-                    <div className="text-[10.5px] text-[color:var(--ink-3)]">票 · {pct}%</div>
+                    <div className="text-[11px] text-[color:var(--ink-3)]">票 · {pct}%</div>
                   </div>
                 )}
               </div>
@@ -254,7 +254,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
             {submitting ? "提交中…" : "🗳️ 提交投票"}
           </button>
           {msg && <p className="mt-2 text-center text-[13px] text-[color:var(--danger)]">{msg}</p>}
-          <p className="mt-2 text-center text-[11.5px] text-[color:var(--ink-3)]">
+          <p className="mt-2 text-center text-[11px] text-[color:var(--ink-3)]">
             {room.multipleChoice ? "可多选" : "单选"} · 提交后可修改（同一设备）
           </p>
         </div>
@@ -270,7 +270,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
           <p className="text-[15px] font-bold">
             🎲 平票了！{results.leaders.map((id) => routeById[id]?.name_cn).join(" vs ")}
           </p>
-          <p className="mt-1 text-[12.5px] text-[color:var(--ink-3)]">只在最高票路线中随机抽取（避免选到低票路线）</p>
+          <p className="mt-1 text-[12px] text-[color:var(--ink-3)]">只在最高票路线中随机抽取（避免选到低票路线）</p>
           <button className="btn-primary mt-3" onClick={() => rollDice(false)} disabled={rolling}>
             {rolling ? "🎲 滚动中…" : "🎲 掷骰决定"}
           </button>
@@ -309,7 +309,7 @@ export function VoteRoom({ voteId }: { voteId: string }) {
           <div className="label mb-2">投票名单</div>
           <div className="flex flex-wrap justify-center gap-1.5">
             {results.voters.map((v, i) => (
-              <span key={i} className="rounded-full bg-[color:var(--paper-2)] px-2.5 py-1 text-[11.5px]">
+              <span key={i} className="rounded-full bg-[color:var(--paper-2)] px-2.5 py-1 text-[11px]">
                 {v.name}
                 {v.count > 1 && <span className="font-num text-[color:var(--ink-3)]"> ×{v.count}</span>}
               </span>

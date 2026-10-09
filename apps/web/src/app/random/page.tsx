@@ -100,7 +100,7 @@ function RandomInner() {
     <div className="mx-auto max-w-2xl">
       <header className="fade-up text-center">
         <div className="label">Random Trail · 随机路线</div>
-        <h1 className="mt-1 font-display text-[30px] font-extrabold sm:text-[38px]">
+        <h1 className="mt-1 font-display text-[34px] font-extrabold sm:text-[44px]">
           不知道去哪<span className="text-[color:var(--blaze)]">？</span>
         </h1>
         <p className="mt-1 text-[14px] text-[color:var(--ink-2)]">
@@ -244,7 +244,7 @@ function RandomInner() {
       {/* 结果 */}
       {rolling && (
         <div className="card mt-6 p-8 text-center">
-          <p className="font-num text-[22px] font-bold text-[color:var(--forest)]">{rollName}</p>
+          <p className="font-num text-[20px] font-bold text-[color:var(--forest)]">{rollName}</p>
           <p className="mt-1 text-[12px] text-[color:var(--ink-3)]">加权随机：匹配 45% · 评分 20% · 热度 15% · 新鲜度 20%</p>
         </div>
       )}
@@ -279,8 +279,8 @@ function RandomInner() {
               <span>↑ {result.picked.elevation_gain_m}m</span>
               <StatusBadge status={result.picked.status} note={result.picked.status_note} />
             </div>
-            <p className="mt-3 text-[13.5px] leading-relaxed text-[color:var(--ink-2)]">{result.picked.description}</p>
-            <div className="mt-4 font-num text-[11.5px] text-[color:var(--ink-3)]">
+            <p className="mt-3 text-[13px] leading-relaxed text-[color:var(--ink-2)]">{result.picked.description}</p>
+            <div className="mt-4 font-num text-[11px] text-[color:var(--ink-3)]">
               match {result.scores.match} · rating {result.scores.rating} · popularity {result.scores.popularity} · freshness {result.scores.freshness}
             </div>
             <div className="mt-4 flex flex-wrap gap-2.5">

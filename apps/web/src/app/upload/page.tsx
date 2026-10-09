@@ -78,7 +78,7 @@ export default function UploadPage() {
             <span>最高 {result.computed.max_ele}m</span>
             <span>轨迹点 {result.computed.points}</span>
           </div>
-          <div className="mt-3 rounded-xl bg-[color:var(--forest-soft)] p-3 text-[12.5px] leading-relaxed text-[color:var(--forest)]">
+          <div className="mt-3 rounded-xl bg-[color:var(--forest-soft)] p-3 text-[12px] leading-relaxed text-[color:var(--forest)]">
             隐私状态：{result.visibility === "PRIVATE" ? "私有（仅自己可见）" : result.visibility}
             <br />
             审核状态：待管理员审核（DRAFT → PENDING_REVIEW → PUBLISHED）
@@ -108,7 +108,7 @@ export default function UploadPage() {
 
       <div className="card mt-6 space-y-5 p-5">
         <label className="flex cursor-pointer flex-col items-center gap-2 rounded-2xl border-2 border-dashed border-[color:var(--line-2)] px-6 py-10 text-center transition-colors hover:border-[color:var(--forest-2)]">
-          <span className="text-[32px]">📥</span>
+          <span className="text-[34px]">📥</span>
           <input type="file" accept=".gpx" className="hidden" onChange={(e) => setFile(e.target.files?.[0] ?? null)} />
           {file ? (
             <>
@@ -144,7 +144,7 @@ export default function UploadPage() {
               </button>
             ))}
           </div>
-          <p className="mt-1.5 text-[11.5px] leading-relaxed text-[color:var(--ink-3)]">
+          <p className="mt-1.5 text-[11px] leading-relaxed text-[color:var(--ink-3)]">
             GPX 包含精确位置信息。默认私有，公开前会经过人工审核。
           </p>
         </div>

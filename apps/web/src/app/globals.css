@@ -30,6 +30,36 @@ html {
   scroll-behavior: smooth;
 }
 
+/* /polish: 键盘焦点环（仅键盘导航显示，不干扰鼠标） */
+:focus-visible {
+  outline: 2px solid rgba(44, 106, 77, 0.85);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+:focus:not(:focus-visible) {
+  outline: none;
+}
+
+/* /polish: 主题化文本选区 */
+::selection {
+  background: rgba(30, 77, 56, 0.85);
+  color: #f2f7f0;
+}
+
+/* /polish: 动效敏感用户降级 */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
 body {
   background-color: var(--paper);
   color: var(--ink);

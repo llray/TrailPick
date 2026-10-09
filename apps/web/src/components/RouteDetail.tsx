@@ -197,7 +197,7 @@ export function RouteDetail({ route }: { route: Route }) {
         {/* 路线信息 */}
         <section className="card p-5">
           <h2 className="mb-3 text-[15px] font-bold">路线信息</h2>
-          <dl className="space-y-2.5 text-[13.5px]">
+          <dl className="space-y-2.5 text-[13px]">
             <Row k="路线类型" v={ROUTE_TYPE_LABELS[route.route_type]} />
             <Row k="难度" v={`${route.difficulty} 级 · ${difficultyLabel(route.difficulty)}`} />
             <Row k="路面" v={route.surface_types.join(" / ")} />
@@ -220,7 +220,7 @@ export function RouteDetail({ route }: { route: Route }) {
         {/* 交通 */}
         <section className="card p-5">
           <h2 className="mb-3 text-[15px] font-bold">如何到达</h2>
-          <div className="space-y-2.5 text-[13.5px]">
+          <div className="space-y-2.5 text-[13px]">
             {route.transport.nearestMetro && (
               <div className="flex items-center gap-2">
                 <span className="waymark" style={{ background: "#1f7a8c" }}>METRO</span>
@@ -267,7 +267,7 @@ export function RouteDetail({ route }: { route: Route }) {
             出发前必读
           </span>
         </h2>
-        <div className="grid gap-x-8 gap-y-3 text-[13.5px] sm:grid-cols-2">
+        <div className="grid gap-x-8 gap-y-3 text-[13px] sm:grid-cols-2">
           <Row k="紧急救援" v={<span className="font-num">{route.safety.emergency}</span>} />
           <Row k="补水点" v={route.safety.waterAvailable ? "沿线/起终点有补给" : "无可靠补给，请带足 1.5L+"} />
           <Row

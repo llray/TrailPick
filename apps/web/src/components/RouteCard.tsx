@@ -15,7 +15,7 @@ export function RouteCard({ route, index = 0 }: { route: RouteCardData; index?: 
       <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
           <div className="flex items-center gap-2">
-            <h3 className="truncate text-[16px] font-bold leading-snug">{route.name_cn}</h3>
+            <h3 className="truncate text-[17px] font-bold leading-snug">{route.name_cn}</h3>
             <StatusBadge status={route.status} note={route.status_note} />
           </div>
           <p className="mt-0.5 text-[12px] text-[color:var(--ink-3)]">

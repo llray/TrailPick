@@ -103,7 +103,7 @@ function CreateInner() {
     return (
       <div className="mx-auto max-w-lg pop-in text-center">
         <div className="text-[44px]">🗳️</div>
-        <h1 className="mt-2 font-display text-[26px] font-extrabold">投票箱已就绪</h1>
+        <h1 className="mt-2 font-display text-[24px] font-extrabold">投票箱已就绪</h1>
         <p className="mt-1 text-[14px] text-[color:var(--ink-2)]">
           把链接发到微信群，大家无需安装任何 App 即可投票
         </p>
@@ -188,7 +188,7 @@ function CreateInner() {
                   </span>
                   <span className="min-w-0 flex-1">
                     <span className="block truncate text-[14px] font-semibold">{r.name_cn}</span>
-                    <span className="font-num block text-[11.5px] text-[color:var(--ink-3)]">
+                    <span className="font-num block text-[11px] text-[color:var(--ink-3)]">
                       {formatKm(r.distance_km)} · {formatDuration(r.estimated_duration_min)} · ↑{r.elevation_gain_m}m
                     </span>
                   </span>
@@ -251,7 +251,7 @@ function CreateInner() {
           <button className="btn-primary w-full" onClick={create} disabled={submitting}>
             {submitting ? "创建中…" : "🗳️ 创建投票并生成链接"}
           </button>
-          <p className="text-center text-[11.5px] leading-relaxed text-[color:var(--ink-3)]">
+          <p className="text-center text-[11px] leading-relaxed text-[color:var(--ink-3)]">
             无需注册 · 微信内可直接打开投票 · 平票时可用骰子决定
           </p>
         </section>

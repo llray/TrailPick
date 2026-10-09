@@ -160,7 +160,7 @@ export function FilterSheet({
       <div className="absolute inset-0 bg-[color:var(--ink)]/40 backdrop-blur-[2px]" onClick={onClose} />
       <div className="pop-in relative flex max-h-[85vh] w-full max-w-lg flex-col rounded-t-3xl bg-[color:var(--paper)] shadow-2xl sm:rounded-3xl">
         <div className="flex items-center justify-between border-b border-[color:var(--line)] px-5 py-4">
-          <h2 className="text-[16px] font-bold">筛选路线</h2>
+          <h2 className="text-[17px] font-bold">筛选路线</h2>
           <button
             className="text-[13px] font-medium text-[color:var(--ink-3)] hover:text-[color:var(--blaze)]"
             onClick={() => onChange({ ...EMPTY_FILTERS })}
